@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17251f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FitTrack">
+<link rel="manifest" href="manifest.json">
+<title>FitTrack — Personal Fitness</title>
+<style>
+:root{--bg:#f4f6f2;--card:#fff;--ink:#17251f;--muted:#718078;--green:#28634b;--lime:#d9efbd;--line:#e6ebe5;--orange:#f4a261}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:88px}
+header{background:#17251f;color:white;padding:26px 20px 22px;border-radius:0 0 24px 24px}
+.top{display:flex;justify-content:space-between;align-items:center}.brand{font-size:13px;letter-spacing:1.7px;font-weight:800;color:#c9dfc9}.date{font-size:12px;color:#b9c8bf}
+h1{font-size:27px;margin:17px 0 4px;letter-spacing:-.6px}.sub{color:#c4d1c8;font-size:13px}
+main{max-width:680px;margin:auto;padding:17px 15px}.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;background:#e7ece6;padding:5px;border-radius:14px;margin-bottom:17px}
+.tabs button{border:0;background:transparent;padding:10px 2px;border-radius:10px;font-size:11px;color:#66736b;font-weight:700}.tabs button.active{background:#fff;color:var(--green);box-shadow:0 2px 8px #10251a12}
+.page{display:none}.page.active{display:block}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:15px;margin-bottom:11px;box-shadow:0 2px 10px #14251a06}
+.card h3{font-size:13px;margin:0 0 12px;color:#526159}.big{font-size:25px;font-weight:800;letter-spacing:-.7px}.small{font-size:12px;color:var(--muted);margin-top:4px}.bar{height:7px;background:#edf1ec;border-radius:9px;overflow:hidden;margin-top:10px}.bar span{display:block;height:100%;background:var(--green);border-radius:9px;width:0}
+.section-title{font-size:19px;margin:8px 0 12px}.muted{color:var(--muted);font-size:13px;line-height:1.5}
+label{display:block;font-size:12px;color:#5d6b62;font-weight:700;margin:10px 0 5px}input,select,textarea{width:100%;border:1px solid #dfe6df;border-radius:11px;padding:12px;background:#fbfcfa;font:inherit;color:var(--ink)}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+button.primary{background:var(--green);color:#fff;border:0;border-radius:11px;padding:12px 15px;font-weight:750;width:100%;margin-top:12px}
+button.secondary{background:#edf4ec;color:var(--green);border:0;border-radius:10px;padding:9px 12px;font-weight:700}
+.item{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.item:last-child{border:0}
+.pill{display:inline-block;background:#edf4ec;color:var(--green);padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.habit{display:flex;align-items:center;gap:9px;padding:8px 0;font-size:13px}.habit input{width:18px;height:18px;accent-color:var(--green)}
+canvas{width:100%;height:190px}
+footer{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));text-align:center;color:#7b887f;font-size:11px}
+.notice{background:#f0f6e9;border-radius:13px;padding:12px;font-size:12px;color:#45624c;line-height:1.45;margin-bottom:12px}
+@media(min-width:600px){main{padding-top:22px}.tabs button{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="top"><div class="brand">FITTRACK / PERSONAL</div><div class="date" id="today"></div></div><h1>Small steps. Real progress.</h1><div class="sub">Your plan: 78 kg → 65 kg · Keep your strength while losing fat</div></header>
+<main>
+<nav class="tabs">
+<button class="active" data-tab="home">Today</button><button data-tab="meals">Meals</button><button data-tab="training">Training</button><button data-tab="progress">Progress</button><button data-tab="settings">Plan</button>
+</nav>
+<section id="home" class="page active">
+<div class="notice">A steady target is around 0.4–0.7 kg per week. Your starting guide is about 1,900 kcal and 120–135 g protein daily. Adjust from your weight trend, energy and hunger—not from one day.</div>
+<div class="grid">
+<div class="card"><h3>CALORIES TODAY</h3><div class="big"><span id="calToday">0</span><small style="font-size:13px;color:#718078"> / 1,900</small></div><div class="bar"><span id="calBar"></span></div><div class="small">Logged from meals</div></div>
+<div class="card"><h3>PROTEIN TODAY</h3><div class="big"><span id="proteinToday">0</span><small style="font-size:13px;color:#718078"> / 120 g</small></div><div class="bar"><span id="proteinBar"></span></div><div class="small">Aim for 120–135 g</div></div>
+<div class="card"><h3>STEPS</h3><div class="big"><span id="stepsToday">—</span></div><div class="small">Daily guide: 7,000–9,000</div></div>
+<div class="card"><h3>WATER</h3><div class="big"><span id="waterToday">0</span><small style="font-size:13px;color:#718078"> / 2.5 L</small></div><div class="small">Drink more on sweaty shifts</div></div>
+</div>
+<div class="card"><h3>DAILY HABITS</h3><div id="habits"></div></div>
+<div class="card"><h3>QUICK LOG</h3><div class="row"><div><label>Steps</label><input id="stepsInput" type="number" min="0" placeholder="e.g. 8000"></div><div><label>Water (litres)</label><input id="waterInput" type="number" min="0" step=".1" placeholder="e.g. 2.2"></div></div><button class="primary" onclick="saveDaily()">Save today's activity</button></div>
+</section>
+<section id="meals" class="page">
+<h2 class="section-title">Food diary</h2><p class="muted">No food scale needed. Use package labels or sensible estimates. Your rice and dal bhat can stay in the plan.</p>
+<div class="card"><div class="row"><div><label>Meal</label><select id="mealType"><option>Breakfast</option><option>Lunch</option><option>Dinner</option><option>Snack</option></select></div><div><label>Food</label><input id="foodName" placeholder="e.g. dal bhat + chicken"></div></div><div class="row"><div><label>Calories (estimate)</label><input id="foodCal" type="number" min="0" placeholder="e.g. 650"></div><div><label>Protein (g)</label><input id="foodProtein" type="number" min="0" placeholder="e.g. 40"></div></div><button class="primary" onclick="addMeal()">Add meal</button></div>
+<div class="card"><h3>TODAY'S MEALS</h3><div id="mealList" class="muted">No meals logged yet.</div></div>
+<div class="card"><h3>Simple dal bhat guide</h3><div class="item"><span>Cooked rice</span><b>About 1 fist / 150 g to start</b></div><div class="item"><span>Dal</span><b>1 bowl</b></div><div class="item"><span>Chicken, fish or eggs</span><b>1–2 palms</b></div><div class="item"><span>Vegetables</span><b>1–2 fists</b></div><p class="muted">Adjust portions for hunger and active shifts. You do not need to cut out rice or skip your late meal after work.</p></div>
+</section>
+<section id="training" class="page">
+<h2 class="section-title">Strength training</h2><p class="muted">Start with two full-body sessions each week. Keep 2–3 reps in reserve and skip a session if you are exhausted after work.</p>
+<div class="card"><h3>WORKOUT A</h3><div id="workoutA"></div><button class="secondary" onclick="completeWorkout('A')">Mark Workout A complete</button></div>
+<div class="card"><h3>WORKOUT B</h3><div id="workoutB"></div><button class="secondary" onclick="completeWorkout('B')">Mark Workout B complete</button></div>
+<div class="card"><h3>OPTIONAL WORKOUT C</h3><div id="workoutC"></div><button class="secondary" onclick="completeWorkout('C')">Mark Workout C complete</button></div>
+<div class="card"><h3>THIS WEEK</h3><div class="big" id="workoutCount">0</div><div class="small">Sessions recorded this week · Aim for 2</div></div>
+</section>
+<section id="progress" class="page">
+<h2 class="section-title">Your progress</h2>
+<div class="card"><h3>LOG A WEIGH-IN</h3><div class="row"><div><label>Weight (kg)</label><input id="weightInput" type="number" min="30" max="300" step=".1" placeholder="e.g. 77.5"></div><div><label>Waist (inches, optional)</label><input id="waistInput" type="number" min="10" max="100" step=".1" placeholder="e.g. 31"></div></div><button class="primary" onclick="addWeight()">Save weigh-in</button></div>
+<div class="grid"><div class="card"><h3>LATEST WEIGHT</h3><div class="big" id="latestWeight">78 kg</div><div class="small">Starting reference: 78 kg</div></div><div class="card"><h3>TO FIRST GOAL</h3><div class="big" id="toGoal">13 kg</div><div class="small">First goal: 65 kg</div></div></div>
+<div class="card"><h3>WEIGHT TREND</h3><canvas id="weightChart" width="600" height="220"></canvas><div id="weightList" class="muted">Your saved weigh-ins will appear here.</div></div>
+<div class="card"><h3>MILESTONES</h3><div class="item"><span>78 kg</span><span class="pill">Starting point</span></div><div class="item"><span>74 kg</span><span>First milestone</span></div><div class="item"><span>70 kg</span><span>Second milestone</span></div><div class="item"><span>65 kg</span><span>First goal</span></div><div class="item"><span>60 kg</span><span>Optional reassessment</span></div></div>
+</section>
+<section id="settings" class="page">
+<h2 class="section-title">Your personal plan</h2>
+<div class="card"><h3>STARTING TARGETS</h3><div class="item"><span>Calories</span><b>~1,900 kcal/day</b></div><div class="item"><span>Protein</span><b>120–135 g/day</b></div><div class="item"><span>Steps</span><b>7,000–9,000/day</b></div><div class="item"><span>Strength</span><b>2 sessions/week</b></div><div class="item"><span>Sleep</span><b>7–9 hours</b></div><div class="item"><span>Water</span><b>~2–2.5 litres</b></div></div>
+<div class="card"><h3>SHIFT-FRIENDLY ROUTINE</h3><div class="item"><span>School + evening shift</span><b>Pack a meal/snack</b></div><div class="item"><span>Long shift</span><b>Simple meal before/after</b></div><div class="item"><span>Short shift</span><b>Use a gym day if rested</b></div><div class="item"><span>Friday off</span><b>Good day for Workout A</b></div><p class="muted">Your kitchen shifts already involve movement. Do not force extra cardio after a very demanding shift.</p></div>
+<div class="card"><h3>DATA & BACKUP</h3><p class="muted">Your logs are stored in this browser on this device. Export a backup regularly, especially before clearing Safari website data or changing phones.</p><button class="primary" onclick="exportData()">Export my data (JSON)</button><label>Restore a backup</label><input type="file" id="importFile" accept="application/json" onchange="importData(event)"><button class="secondary" onclick="clearData()" style="margin-top:12px">Clear all app data</button></div>
+<div class="notice">This app provides general fitness guidance, not medical care. Calorie needs are estimates. If you feel persistently weak, dizzy or unwell, stop restricting and speak with a healthcare professional.</div>
+</section>
+</main>
+<footer>FITTRACK · Your data stays in this browser · Not medical advice</footer>
+<script>
+const KEY='fittrack_personal_v1';
+const todayKey=()=>new Date().toISOString().slice(0,10);
+let db=JSON.parse(localStorage.getItem(KEY)||'{"meals":[],"weights":[],"daily":{},"workouts":[]}');
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+document.getElementById('today').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active');if(b.dataset.tab==='progress')drawChart()}));
+const habits=['Eat a protein source with main meals','Include fruit or vegetables','Take a walk or reach a natural step goal','Avoid skipping food to compensate','Aim for a consistent bedtime'];
+function render(){
+ const day=todayKey(), meals=db.meals.filter(m=>m.date===day), cal=meals.reduce((s,m)=>s+m.cal,0), pro=meals.reduce((s,m)=>s+m.pro,0), daily=db.daily[day]||{};
+ document.getElementById('calToday').textContent=cal;document.getElementById('proteinToday').textContent=pro;
+ document.getElementById('calBar').style.width=Math.min(100,cal/1900*100)+'%';document.getElementById('proteinBar').style.width=Math.min(100,pro/120*100)+'%';
+ document.getElementById('stepsToday').textContent=daily.steps?Number(daily.steps).toLocaleString():'—';document.getElementById('waterToday').textContent=daily.water||0;
+ document.getElementById('stepsInput').value=daily.steps||'';document.getElementById('waterInput').value=daily.water||'';
+ document.getElementById('habits').innerHTML=habits.map((h,i)=>`<label class="habit"><input type="checkbox" ${daily.habits?.includes(i)?'checked':''} onchange="toggleHabit(${i},this.checked)">${h}</label>`).join('');
+ document.getElementById('mealList').innerHTML=meals.length?meals.map(m=>`<div class="item"><span>${esc(m.type)} · ${esc(m.name)}</span><b>${m.cal} kcal · ${m.pro} g</b></div>`).join(''):'No meals logged yet.';
+ document.getElementById('latestWeight').textContent=(db.weights.at(-1)?.weight??78)+' kg';
+ document.getElementById('toGoal').textContent=Math.max(0,((db.weights.at(-1)?.weight??78)-65)).toFixed(1)+' kg';
+ document.getElementById('weightList').innerHTML=db.weights.length?db.weights.slice().reverse().map(w=>`<div class="item"><span>${w.date}${w.waist?' · Waist '+w.waist+' in':''}</span><b>${w.weight} kg</b></div>`).join(''):'Your saved weigh-ins will appear here.';
+ const weekAgo=new Date(Date.now()-7*86400000).toISOString().slice(0,10);
+ document.getElementById('workoutCount').textContent=db.workouts.filter(w=>w.date>=weekAgo).length;
+ drawChart();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function saveDaily(){let d=db.daily[todayKey()]||{};d.steps=Number(document.getElementById('stepsInput').value)||0;d.water=Number(document.getElementById('waterInput').value)||0;db.daily[todayKey()]=d;persist()}
+function toggleHabit(i,on){let d=db.daily[todayKey()]||{};d.habits=d.habits||[];d.habits=on?[...new Set([...d.habits,i])]:d.habits.filter(x=>x!==i);db.daily[todayKey()]=d;localStorage.setItem(KEY,JSON.stringify(db))}
+function addMeal(){let name=document.getElementById('foodName').value.trim(),cal=Number(document.getElementById('foodCal').value),pro=Number(document.getElementById('foodProtein').value);if(!name||cal<0||!Number.isFinite(cal)||pro<0||!Number.isFinite(pro)){alert('Please enter the food name, calories and protein.');return}db.meals.push({date:todayKey(),type:document.getElementById('mealType').value,name,cal,pro});document.getElementById('foodName').value='';document.getElementById('foodCal').value='';document.getElementById('foodProtein').value='';persist()}
+function addWeight(){let weight=Number(document.getElementById('weightInput').value),waist=Number(document.getElementById('waistInput').value)||null;if(!weight||weight<30||weight>300){alert('Enter a valid weight in kg.');return}db.weights.push({date:todayKey(),weight,waist});db.weights.sort((a,b)=>a.date.localeCompare(b.date));document.getElementById('weightInput').value='';document.getElementById('waistInput').value='';persist()}
+const exercises={A:['Leg press — 3 × 10–12','Chest press — 3 × 10–12','Lat pulldown — 3 × 10–12','Seated cable row — 2 × 12','Plank — 2 × 20–30 sec'],B:['Goblet squat — 3 × 10','Shoulder press — 3 × 10','Leg curl — 3 × 12','Dumbbell Romanian deadlift — 2 × 10','Cable crunch — 2 × 12'],C:['Leg press — 2 × 12','Incline chest press — 3 × 10','Lat pulldown — 3 × 12','Seated row — 2 × 12','Lateral raises — 2 × 12']};
+['A','B','C'].forEach(k=>document.getElementById('workout'+k).innerHTML=exercises[k].map(x=>`<div class="item"><span>${x}</span><span class="pill">Planned</span></div>`).join(''));
+function completeWorkout(k){db.workouts.push({date:todayKey(),workout:k});persist();alert('Workout '+k+' saved. Nice work!')}
+function drawChart(){let c=document.getElementById('weightChart');if(!c)return;let ctx=c.getContext('2d'),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);let a=db.weights;if(!a.length){ctx.fillStyle='#718078';ctx.font='16px sans-serif';ctx.fillText('Add your first weigh-in to see the trend',20,110);return}let vals=a.map(x=>x.weight),lo=Math.min(...vals,65)-1,hi=Math.max(...vals,78)+1;ctx.strokeStyle='#e4eae3';ctx.lineWidth=1;for(let i=0;i<5;i++){let y=20+i*(H-45)/4;ctx.beginPath();ctx.moveTo(35,y);ctx.lineTo(W-15,y);ctx.stroke()}let pts=vals.map((v,i)=>({x:35+(a.length===1?0:i*(W-65)/(a.length-1)),y:20+(hi-v)*(H-45)/(hi-lo)}));ctx.strokeStyle='#28634b';ctx.lineWidth=4;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.stroke();pts.forEach((p,i)=>{ctx.fillStyle='#28634b';ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#17251f';ctx.font='13px sans-serif';ctx.fillText(vals[i],p.x-10,p.y-12)});ctx.fillStyle='#718078';ctx.font='12px sans-serif';ctx.fillText('65 kg goal',W-85,H-8)}
+function exportData(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='fittrack-backup-'+todayKey()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importData(e){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.meals||!x.weights||!x.daily)throw 0;db=x;persist();alert('Backup restored.')}catch{alert('That backup file could not be read.')}};r.readAsText(f)}
+function clearData(){if(confirm('Delete all FitTrack logs from this browser? Export a backup first if you need one.')){db={meals:[],weights:[],daily:{},workouts:[]};persist()}}
+// Accept daily step totals sent from an iPhone Shortcut via URL parameters.
+(function receiveShortcutSteps(){
+ const params=new URLSearchParams(location.search);
+ const steps=params.get('steps');
+ const date=params.get('date') || todayKey();
+ if(steps!==null && /^\d+$/.test(steps) && Number(steps)>=0 && Number(steps)<200000 && /^\d{4}-\d{2}-\d{2}$/.test(date)){
+   db.daily[date]=db.daily[date]||{};
+   db.daily[date].steps=Number(steps);
+   localStorage.setItem(KEY,JSON.stringify(db));
+   history.replaceState({},'',location.pathname);
+   setTimeout(()=>alert('Apple Health steps synced: '+Number(steps).toLocaleString()),250);
+ }
+})();
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+render();
+</script>
+</body></html>

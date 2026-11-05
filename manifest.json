@@ -1,0 +1,9 @@
+{
+  "name": "FitTrack Personal Fitness",
+  "short_name": "FitTrack",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f6f2",
+  "theme_color": "#17251f",
+  "description": "Personal weight, meal, habit and workout tracker"
+}
